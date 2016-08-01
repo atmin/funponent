@@ -1,5 +1,4 @@
-# funponent
-JS fatigue much? Make front-end fun again.
+## What
 
 ```js
 //   __                                          _
@@ -16,7 +15,7 @@ import {React, funponent} from 'funponent';
 
 // Progressively enhance these DOM elements
 // In realtime. Loading component mount points via AJAX? No problem.
-const selector = '.funponent-hello';
+const selector = '[data-component=hello]';
 
 // The component function. Must be pure, receives (data-* attributes) params
 // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
@@ -53,60 +52,71 @@ const events = {
 };
 
 // Init function. Can supply params via `dataset` (also async)
+// React equivalent: componentDidMount
 const init = element => {
   element.dataset.hash = location.hash;
 };
 
-// Bind all together (events and init are optional)
-funponent({selector, component, events, init});
+// Destroy function, called before deleting component
+// React equivalent: componentWillUnmount
+const destroy = element => {
+  // some cleanup code here, perhaps `clearInterval`
+};
 
-// Initial state:
-//
-// <div class="funponent-hello" data-current-name="world">
-//   <!-- maybe some initial server output.
-//        will be diffed against. -->
-// </div>
-// <div class="funponent-hello" data-current-name="another instance">
-// </div>
-//
-// After funponent:
-//
-// <div class="funponent-hello" data-current-name="world">
-//   <p>
-//     Hello world
-//   </p>
-//   <p>
-//     <input value="world" />
-//   </p>
-//   <p>
-//      <a href="#some-hash-triggered-by-init">
-//        Click to change #hash
-//      </a>
-//   </p>
-// </div>
-// <div class="funponent-hello" data-current-name="another instance">
-//   <p>
-//     Hello another instance
-//   </p>
-//   <p>
-//     <input value="another instance" />
-//   </p>
-//   <p>
-//      <a href="#some-hash-triggered-by-init">
-//        Click to change #hash
-//      </a>
-//   </p>
-// </div>
-//
-//
-// Whenever user types anything ('input' event), `data-current-name` is reflected
-//
-// Transition between states performed by morph-dom
-//
-//
-// DOM is the single source of truth.
-// More specifically: components' data-* attributes
-//
-// Nesting funponents is seamless
-
+// Bind all together (events, init and destroy  are optional)
+funponent({selector, component, events, init, destroy});
 ```
+
+### Initial state
+
+```html
+<div data-component="hello" data-current-name="world">
+  <!-- maybe some initial server output.
+       will be diffed against. -->
+</div>
+<div data-component="hello" data-current-name="another instance">
+</div>
+```
+
+### After funponent
+
+```html
+<div data-component="hello" data-current-name="world">
+  <p>
+    Hello world
+  </p>
+  <p>
+    <input value="world" />
+  </p>
+  <p>
+     <a href="#some-hash-triggered-by-init">
+       Click to change #hash
+     </a>
+  </p>
+</div>
+<div data-component="hello" data-current-name="another instance">
+  <p>
+    Hello another instance
+  </p>
+  <p>
+    <input value="another instance" />
+  </p>
+  <p>
+     <a href="#some-hash-triggered-by-init">
+       Click to change #hash
+     </a>
+  </p>
+</div>
+```
+
+## Notes
+
+* Whenever user types anything ('input' event), `data-current-name` is reflected
+
+* Transition between states performed by [morphdom](https://github.com/patrick-steele-idem/morphdom)
+
+* DOM is the single source of truth. More specifically: components' `data-*` attributes
+
+* Nesting funponents is seamless, a component can render mount points for other components
+
+* Browser developer tools can be used to inspect current state at any time
