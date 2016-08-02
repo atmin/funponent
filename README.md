@@ -10,8 +10,8 @@
 //                 | |
 // FUNPONENT       |_|             CONCEPT / TUTORIAL
 
-// React is just a shim for Babel JSX to work with default settings
-import {React, funponent} from 'funponent';
+/* @jsx funponent */
+import funponent from 'funponent';
 
 // Progressively enhance these DOM elements
 // In realtime. Loading component mount points via AJAX? No problem.
@@ -63,7 +63,7 @@ const destroy = element => {
   // some cleanup code here, perhaps `clearInterval`
 };
 
-// Bind all together (events, init and destroy  are optional)
+// Bind all together (events, init and destroy are optional)
 funponent({selector, component, events, init, destroy});
 ```
 
@@ -118,5 +118,7 @@ funponent({selector, component, events, init, destroy});
 * DOM is the single source of truth. More specifically: components' `data-*` attributes
 
 * Nesting funponents is seamless, a component can render mount points for other components
+
+* MutationObserver is used to detect state changes
 
 * Browser developer tools can be used to inspect current state at any time
