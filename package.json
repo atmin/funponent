@@ -1,0 +1,35 @@
+{
+  "name": "funponent",
+  "version": "0.0.1",
+  "description": "DOM tree is a result of a pure function, receiving data-* params",
+  "main": "datafun.js",
+  "dependencies": {},
+  "devDependencies": {
+    "buble": "^0.12.5",
+    "nodemon": "^1.10.0",
+    "rollup": "^0.34.3",
+    "rollup-plugin-commonjs": "^3.3.1",
+    "rollup-plugin-node-resolve": "^2.0.0"
+  },
+  "scripts": {
+    "build": "rollup -c rollup-config.js",
+    "test": "npm test",
+    "watch": "nodemon --watch src --exec 'npm run build'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atmin/funponent.git"
+  },
+  "keywords": [
+    "dom",
+    "component",
+    "pure",
+    "function"
+  ],
+  "author": "Atanas Minev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atmin/funponent/issues"
+  },
+  "homepage": "https://github.com/atmin/funponent#readme"
+}
