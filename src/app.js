@@ -1,19 +1,31 @@
 import {h, bind} from './funponent';
 
 const hello = (data) => (
-  <div>
+  <body>
     hello, <span>{data.name}</span>
     <pre>
       <code>
+        These are all my attributes
+        <br />
+        <br />
         {Object.keys(data)
           .map(key => `data-${key}=${data[key]}`)
           .join('\n')}
       </code>
     </pre>
-  </div>
+    <ul>
+      {Array
+        .apply(null, Array(parseInt(data.count)))
+        .map((el, index) => (
+          <li
+            data-component={'item'}
+            data-what={index} />
+        ))}
+    </ul>
+  </body>
 );
 
-const another = () => <div>42</div>;
+const item = (dataset) => <body>{dataset.what}</body>;
 
 bind('[data-component=hello]', hello);
-bind('[data-component=another]', another);
+bind('[data-component=item]', item);

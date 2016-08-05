@@ -4,6 +4,8 @@
 	(factory());
 }(this, function () { 'use strict';
 
+	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}
+
 	function interopDefault(ex) {
 		return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
 	}
@@ -574,6 +576,33 @@
 
 	var morphdom = interopDefault(index);
 
+	var matchesSelector = createCommonjsModule(function (module) {
+	/*! Lee Cooper <lee.cooper@lski.uk> - matches-selector-polyfill - 1.0.0 */!function(e,t){if(!e.Element)throw new Error("Element is required for matches-selector-polyfill to be used");"function"==typeof define&&define.amd?define([],t):"object"==typeof module&&module.exports&&(module.exports=t())}(commonjsGlobal,function(){"use strict";function e(e){for(var t=this,r=t.parentNode.querySelectorAll(e),o=r.length;--o>=0;)if(r.item(o)===t)return!0;return!1}function t(e,t){return o.call(e,t)}var r=Element.prototype,o=r.matches||r.webkitMatchesSelector||r.mozMatchesSelector||r.msMatchesSelector||e;return t});
+	});
+
+	interopDefault(matchesSelector);
+
+	// observe document for dynamically added components
+	var selectors = {};
+	(new MutationObserver(function (mutations) {
+	  mutations.forEach(function (mutation) {
+	    [].slice.call(mutation.addedNodes || [])
+	      .filter(function (node) { return node.nodeType === 1; })
+	      .forEach(function (node) {
+	        Object.keys(selectors)
+	          .filter(function (selector) { return node.matches(selector); })
+	          .forEach(function (selector) { return selectors[selector](node); });
+	      });
+	  });
+	})).observe(document, {
+	  childList: true,
+	  subtree: true
+	});
+
+	// convenient wrapper around querySelectorAll, jQuery style
+	var $ = function (selector) { return [].slice.call(document.querySelectorAll(selector)); };
+
+	// DOM builder, JSX style
 	var h = function (nodeName, attributes) {
 	  var children = [], len = arguments.length - 2;
 	  while ( len-- > 0 ) children[ len ] = arguments[ len + 2 ];
@@ -583,47 +612,66 @@
 	    node.setAttribute(name, attributes[name]);
 	  });
 	  children.forEach(function (child) {
-	    node.appendChild(typeof (child || '') === 'string' ?
-	      document.createTextNode(child || '') : child
-	    );
+	    if (Array.isArray(child)) {
+	      var fragment = document.createDocumentFragment();
+	      child.forEach(function (subchild) { return fragment.appendChild(subchild); });
+	      node.appendChild(fragment);
+	    } else if (typeof (child || '') === 'string') {
+	      node.appendChild(document.createTextNode(child || ''));
+	    } else {
+	      node.appendChild(child);
+	    }
 	  });
 	  return node;
 	};
 
+	// bind a selector to a view function
 	var bind = function (selector, view) {
-	  var render = function (node) { return morphdom(node, view(node.dataset), {childrenOnly: true}); };
-
-	  var qsa = function (sel) { return [].slice.call(document.querySelectorAll(sel)); };
-
-	  qsa(selector).forEach(function (node) {
-	    var observer = new MutationObserver(function (mutations) {
-	      var datasetMutations = mutations.filter(
-	        function (mut) { return (mut.attributeName || '').startsWith('data-'); }
+	  var render = function (node) {
+	    morphdom(node, view(node.dataset), {childrenOnly: true})
+	  };
+	  var init = function (node) {
+	    (new MutationObserver(function (mutations) {
+	      var dirty = mutations.filter(function (mut) { return mut.attributeName ?
+	        mut.attributeName.startsWith('data-') : Boolean(mut.removedNodes.length); }
 	      );
-	      if (datasetMutations.length) {
+	      if (dirty.length) {
 	        render(node);
 	      }
+	    })).observe(node, {
+	      attributes: true,
+	      childList: true,
 	    });
-	    observer.observe(node, {attributes: true});
 	    render(node);
-	  });
+	  };
+	  $(selector).forEach(init);
+	  selectors[selector] = selectors[selector] || init;
 	};
 
 	var hello = function (data) { return (
-	  h( 'div', null, "hello, ", h( 'span', null, data.name ),
+	  h( 'body', null, "hello, ", h( 'span', null, data.name ),
 	    h( 'pre', null,
-	      h( 'code', null,
+	      h( 'code', null, "These are all my attributes ", h( 'br', null ),
+	        h( 'br', null ),
 	        Object.keys(data)
 	          .map(function (key) { return ("data-" + key + "=" + (data[key])); })
 	          .join('\n')
 	      )
+	    ),
+	    h( 'ul', null,
+	      Array
+	        .apply(null, Array(parseInt(data.count)))
+	        .map(function (el, index) { return (
+	          h( 'li', {
+	            'data-component': 'item', 'data-what': index })
+	        ); })
 	    )
 	  )
 	); };
 
-	var another = function () { return h( 'div', null, "42" ); };
+	var item = function (dataset) { return h( 'body', null, dataset.what ); };
 
 	bind('[data-component=hello]', hello);
-	bind('[data-component=another]', another);
+	bind('[data-component=item]', item);
 
 }));
