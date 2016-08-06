@@ -582,8 +582,9 @@
 
 	interopDefault(matchesSelector);
 
-	// observe document for dynamically added components
 	var selectors = {};
+
+	// Observe document for dynamically added components
 	(new MutationObserver(function (mutations) {
 	  mutations.forEach(function (mutation) {
 	    [].slice.call(mutation.addedNodes || [])
@@ -599,18 +600,40 @@
 	  subtree: true
 	});
 
-	// convenient wrapper around querySelectorAll, jQuery style
-	var $ = function (selector) { return [].slice.call(document.querySelectorAll(selector)); };
-
 	// DOM builder, JSX style
+	var svgns = 'http://www.w3.org/2000/svg';
+	var specialAttrs = {
+	  className: 'class',
+	  htmlFor: 'for',
+	};
+	var svgTags = [
+	  'svg',
+	  'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate', 'animateColor',
+	  'animateMotion', 'animateTransform', 'circle', 'clipPath', 'color-profile',
+	  'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColorMatrix',
+	  'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+	  'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB',
+	  'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode',
+	  'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting',
+	  'feSpotLight', 'feTile', 'feTurbulence', 'filter', 'font', 'font-face',
+	  'font-face-format', 'font-face-name', 'font-face-src', 'font-face-uri',
+	  'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image', 'line',
+	  'linearGradient', 'marker', 'mask', 'metadata', 'missing-glyph', 'mpath',
+	  'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect',
+	  'set', 'stop', 'switch', 'symbol', 'text', 'textPath', 'title', 'tref',
+	  'tspan', 'use', 'view', 'vkern',
+	];
 	var h = function (nodeName, attributes) {
 	  var children = [], len = arguments.length - 2;
 	  while ( len-- > 0 ) children[ len ] = arguments[ len + 2 ];
 
-	  var node = document.createElement(nodeName);
-	  Object.keys(attributes || {}).forEach(function (name) {
-	    node.setAttribute(name, attributes[name]);
-	  });
+	  var node = (svgTags.indexOf(nodeName) > -1) ?
+	    document.createElementNS(svgns, nodeName) :
+	    document.createElement(nodeName);
+	  var setAttribute = function (attr) {
+	    node.setAttribute(specialAttrs[attr] || attr, attributes[attr]);
+	  };
+	  Object.keys(attributes || {}).forEach(setAttribute);
 	  children.forEach(function (child) {
 	    if (Array.isArray(child)) {
 	      var fragment = document.createDocumentFragment();
@@ -626,16 +649,18 @@
 	};
 
 	// bind a selector to a view function
-	var bind = function (selector, view) {
+	var bind = function (selector, view, options) {
+	  if ( options === void 0 ) options={};
+
 	  var render = function (node) {
-	    morphdom(node, view(node.dataset), {childrenOnly: true})
+	    morphdom(node, view(node.dataset), Object.assign({}, options, {childrenOnly: true}))
 	  };
 	  var init = function (node) {
 	    (new MutationObserver(function (mutations) {
-	      var dirty = mutations.filter(function (mut) { return mut.attributeName ?
+	      var dirty = mutations.some(function (mut) { return mut.attributeName ?
 	        mut.attributeName.startsWith('data-') : Boolean(mut.removedNodes.length); }
 	      );
-	      if (dirty.length) {
+	      if (dirty) {
 	        render(node);
 	      }
 	    })).observe(node, {
@@ -644,7 +669,7 @@
 	    });
 	    render(node);
 	  };
-	  $(selector).forEach(init);
+	  [].slice.call(document.querySelectorAll(selector)).forEach(init);
 	  selectors[selector] = selectors[selector] || init;
 	};
 
@@ -671,7 +696,18 @@
 
 	var item = function (dataset) { return h( 'body', null, dataset.what ); };
 
+	var svg = function (data) { return (
+	  h( 'body', null,
+	    h( 'svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 100 100" },
+	      h( 'ellipse', { cx: "50", cy: "80", rx: "46", ry: "19", fill: "#07c" }),
+	      h( 'path', { d: "M43,0c-6,25,16,22,1,52c11,3,19,0,19-22c38,18,16,63-12,64c-25,2-55-39-8-94", fill: "#e34" }),
+	      h( 'path', { d: "M34,41c-6,39,29,32,33,7c39,42-69,63-33-7", fill: "#fc2", style: ("opacity: " + (data.opacity)) })
+	    )
+	  )
+	); };
+
 	bind('[data-component=hello]', hello);
 	bind('[data-component=item]', item);
+	bind('[data-component=svg]', svg);
 
 }));
