@@ -676,14 +676,13 @@
 	var hello = function (data) { return (
 	  h( 'body', null, "hello, ", h( 'span', null, data.name ),
 	    h( 'pre', null,
-	      h( 'code', null, "These are all my attributes ", h( 'br', null ),
-	        h( 'br', null ),
+	      h( 'code', null,
 	        Object.keys(data)
-	          .map(function (key) { return ("data-" + key + "=" + (data[key])); })
+	          .map(function (key) { return (key + "=\"" + (data[key]) + "\""); })
 	          .join('\n')
 	      )
 	    ),
-	    h( 'ul', null,
+	    h( 'ul', { className: 'grid-list' },
 	      Array
 	        .apply(null, Array(parseInt(data.count)))
 	        .map(function (el, index) { return (
@@ -694,14 +693,16 @@
 	  )
 	); };
 
-	var item = function (dataset) { return h( 'body', null, dataset.what ); };
+	var item = function (data) { return h( 'body', null, data.what ); };
 
 	var svg = function (data) { return (
 	  h( 'body', null,
-	    h( 'svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 100 100" },
+	    h( 'svg', { viewBox: "0 0 100 100" },
 	      h( 'ellipse', { cx: "50", cy: "80", rx: "46", ry: "19", fill: "#07c" }),
-	      h( 'path', { d: "M43,0c-6,25,16,22,1,52c11,3,19,0,19-22c38,18,16,63-12,64c-25,2-55-39-8-94", fill: "#e34" }),
-	      h( 'path', { d: "M34,41c-6,39,29,32,33,7c39,42-69,63-33-7", fill: "#fc2", style: ("opacity: " + (data.opacity)) })
+	      h( 'path', {
+	        d: 'M43,0c-6,25,16,22,1,52c11,3,19,0,19-22c38,18,16,63-12,64c-25,2-55-39-8-94', fill: '#e34' }),
+	      h( 'path', {
+	        d: 'M34,41c-6,39,29,32,33,7c39,42-69,63-33-7', fill: '#fc2', style: ("opacity: " + (data.opacity)) })
 	    )
 	  )
 	); };

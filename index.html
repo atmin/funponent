@@ -1,18 +1,108 @@
 <!doctype html>
+<html>
 
-<div
-  data-component="hello"
-  data-count="5"
-  data-name="world"></div>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 150%;
+      background: #FFF;
+      color: #16161D;
+      margin: 1em 6em;
+      line-height: 1.5;
+    }
+    h1, h2, h3, h4, h5 {
+      font-family: monospace;
+    }
+    a {
+      text-decoration: none;
+      border-bottom: 1px dotted #AAA;
+    }
+    h1 small {
+      font-size: 42%;
+      font-weight: 100;
+      position: relative;
+      top: -1.8em;
+    }
+    pre {
+      position: relative;
+      background-color: #EEE;
+      padding: 1em 0;
+    }
+    pre:after,
+    pre:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      background: #EEE;
+      z-index: -1;
+    }
+    pre:after {
+      right: -50%;
+    }
+    pre:before {
+      left: -50%;
+    }
+    .grid-list {
+      border: 1px solid #EEE;
+    }
+    .grid-list li {
+      list-style-type: none;
+      margin: 0;
+      display: inline-block;
+      padding: 0.5em 2em;
+    }
+    [data-component=hello] {
+      margin-bottom: 4em;
+    }
+  </style>
+</head>
 
-<div
-  id="another-hello"
-  data-component="hello"
-  data-count="10"
-  data-name="you"></div>
+<body>
+  <h1>
+    Funponent<br>
+    <small>DOM ⇔ pure JavaScript function isomorphism </small>
+  </h1>
 
-<div
-  data-component="svg"
-  data-opacity="0.5"></div>
+  <h2>
+    <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L3">
+      hello component
+    </a>
+  </h2>
+  <div
+    data-component="hello"
+    data-count="5"
+    data-name="world"></div>
 
-<script src="dist/components.js"></script>
+  <h2>Another instance of hello</h2>
+  <div
+    id="another-hello"
+    data-component="hello"
+    data-count="10"
+    data-name="use DevTools to change my data-* attributes"></div>
+
+  <h2>
+    funponent understands
+    <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L30">SVG</a>
+  </h2>
+  <div
+    data-component="svg"
+    data-opacity="0.5"
+    style="width: 50%; margin: 0 auto;"></div>
+
+  <script src="dist/components.js"></script>
+  <script type="ignore">
+    var step = 0.1;
+    var counter = 0;
+    setInterval(function() {
+      counter += step;
+      document.querySelector('[data-component=svg]')
+        .dataset.opacity = Math.abs(Math.sin(counter));
+    }, 100);
+  </script>
+</body>
+
+</html>
