@@ -6,6 +6,7 @@ export default {
   entry: 'src/app.js',
   dest: 'dist/components.js',
   format: 'umd',
+  moduleName: 'funponent',
   plugins: [
     buble({jsx: 'h'}),
     commonjs({include: 'node_modules/**'}),

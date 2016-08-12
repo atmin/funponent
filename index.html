@@ -20,10 +20,21 @@
       border-bottom: 1px dotted #AAA;
     }
     h1 small {
-      font-size: 42%;
+      font-size: 38%;
       font-weight: 100;
+      display: block;
+      line-height: 1.2;
       position: relative;
-      top: -1.8em;
+    }
+    h1 small:before {
+      content: "";
+      display: block;
+      background: linear-gradient(180deg,hsla(0,0%,100%,0) 0,#fff 50%,#fff);
+      width: 100%;
+      height: 1.5em;
+      position: absolute;
+      top: -1.5em;
+      left: 0;
     }
     pre {
       position: relative;
@@ -63,14 +74,21 @@
 
 <body>
   <h1>
-    Funponent<br>
-    <small>DOM ⇔ pure JavaScript function isomorphism </small>
+    funponent<br>
+    <small>
+      DOM is a pure function
+    </small>
   </h1>
+
+  <p>
+    Use DevTools to inspect following component instances, change <code>data-*</code> params
+  </p>
 
   <h2>
     <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L3">
-      hello component
+      hello
     </a>
+    component.
   </h2>
   <div
     data-component="hello"

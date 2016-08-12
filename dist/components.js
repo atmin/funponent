@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(factory());
-}(this, function () { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.funponent = global.funponent || {})));
+}(this, function (exports) { 'use strict';
 
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}
 
@@ -710,5 +710,10 @@
 	bind('[data-component=hello]', hello);
 	bind('[data-component=item]', item);
 	bind('[data-component=svg]', svg);
+
+	exports.h = h;
+	exports.bind = bind;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

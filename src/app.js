@@ -42,3 +42,6 @@ const svg = (data) => (
 bind('[data-component=hello]', hello);
 bind('[data-component=item]', item);
 bind('[data-component=svg]', svg);
+
+// to experiment in the browser
+export {h, bind};
