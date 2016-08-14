@@ -1,126 +1,69 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://npmcdn.com/tachyons@4.0.5/css/tachyons.min.css" />
   <style>
-    body {
-      font-family: sans-serif;
-      font-size: 150%;
-      background: #FFF;
-      color: #16161D;
-      margin: 1em 6em;
-      line-height: 1.5;
-    }
-    h1, h2, h3, h4, h5 {
-      font-family: monospace;
-    }
     a {
       text-decoration: none;
-      border-bottom: 1px dotted #AAA;
+      border-bottom: 1px dotted #999;
     }
-    h1 small {
-      font-size: 38%;
-      font-weight: 100;
-      display: block;
-      line-height: 1.2;
-      position: relative;
-    }
-    h1 small:before {
-      content: "";
-      display: block;
-      background: linear-gradient(180deg,hsla(0,0%,100%,0) 0,#fff 50%,#fff);
-      width: 100%;
-      height: 1.5em;
-      position: absolute;
-      top: -1.5em;
-      left: 0;
-    }
-    pre {
-      position: relative;
-      background-color: #EEE;
-      padding: 1em 0;
-    }
-    pre:after,
-    pre:before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 50%;
-      background: #EEE;
-      z-index: -1;
-    }
-    pre:after {
-      right: -50%;
-    }
-    pre:before {
-      left: -50%;
-    }
-    .grid-list {
-      border: 1px solid #EEE;
-    }
-    .grid-list li {
-      list-style-type: none;
-      margin: 0;
-      display: inline-block;
-      padding: 0.5em 2em;
-    }
-    [data-component=hello] {
-      margin-bottom: 4em;
+    a:hover {
+      text-decoration: underline;
+      border: none;
     }
   </style>
 </head>
+<body class="w-100 sans-serif">
+  <header class="pv1 white-80 bg-dark-gray">
+    <div class="mw5 mw7-ns center">
+      <h1 class="f4 f1-ns">
+        <span class="red">f</span><span class="green">u</span><span class="blue">n</span>ponent
+      </h1>
+      <h2 class="f5 fw1 tracked">
+        DOM is a pure function.
+        State is <code>data-*</code> attributes
+      </h2>
+    </div>
+  </header>
 
-<body>
-  <h1>
-    funponent<br>
-    <small>
-      DOM is a pure function
-    </small>
-  </h1>
+  <main class="mw5 mw7-ns center dark-gray lh-copy">
+    <div class="pb1 bb b--black-10">
+      <p>
+        Use DevTools to inspect following component instances,
+        change <code class="nowrap">data-*</code> params
+      </p>
+    </div>
 
-  <p>
-    Use DevTools to inspect following component instances, change <code>data-*</code> params
-  </p>
+    <h2>
+      <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L3">
+        hello</a>
+      component.
+    </h2>
+    <div
+      class="hello bb b--black-10"
+      data-count="5"
+      data-name="world"></div>
 
-  <h2>
-    <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L3">
-      hello
-    </a>
-    component.
-  </h2>
-  <div
-    data-component="hello"
-    data-count="5"
-    data-name="world"></div>
+    <h2>
+      Another instance of hello
+    </h2>
+    <div
+      id="another-hello"
+      class="hello bb b--black-10"
+      data-count="10"
+      data-name="you"></div>
 
-  <h2>Another instance of hello</h2>
-  <div
-    id="another-hello"
-    data-component="hello"
-    data-count="10"
-    data-name="use DevTools to change my data-* attributes"></div>
-
-  <h2>
-    funponent understands
-    <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L30">SVG</a>
-  </h2>
-  <div
-    data-component="svg"
-    data-opacity="0.5"
-    style="width: 50%; margin: 0 auto;"></div>
+    <h2>
+      funponent understands
+      <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L30">SVG</a>
+    </h2>
+    <div
+      class="svg"
+      data-count="9"></div>
+  </main>
 
   <script src="dist/components.js"></script>
-  <script type="ignore">
-    var step = 0.1;
-    var counter = 0;
-    setInterval(function() {
-      counter += step;
-      document.querySelector('[data-component=svg]')
-        .dataset.opacity = Math.abs(Math.sin(counter));
-    }, 100);
-  </script>
 </body>
 
 </html>

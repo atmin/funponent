@@ -674,7 +674,9 @@
 	};
 
 	var hello = function (data) { return (
-	  h( 'body', null, "hello, ", h( 'span', null, data.name ),
+	  h( 'body', null,
+	    h( 'p', null, "hello, ", h( 'span', null, data.name )
+	    ),
 	    h( 'pre', null,
 	      h( 'code', null,
 	        Object.keys(data)
@@ -682,34 +684,52 @@
 	          .join('\n')
 	      )
 	    ),
-	    h( 'ul', { className: 'grid-list' },
+	    h( 'ul', { className: 'list' },
 	      Array
 	        .apply(null, Array(parseInt(data.count)))
 	        .map(function (el, index) { return (
 	          h( 'li', {
-	            'data-component': 'item', 'data-what': index })
+	            className: 'pr2 dib', 'data-component': 'item', 'data-what': index })
 	        ); })
 	    )
 	  )
 	); };
 
-	var item = function (data) { return h( 'body', null, data.what ); };
-
-	var svg = function (data) { return (
+	var helloItem = function (data) { return (
 	  h( 'body', null,
-	    h( 'svg', { viewBox: "0 0 100 100" },
-	      h( 'ellipse', { cx: "50", cy: "80", rx: "46", ry: "19", fill: "#07c" }),
-	      h( 'path', {
-	        d: 'M43,0c-6,25,16,22,1,52c11,3,19,0,19-22c38,18,16,63-12,64c-25,2-55-39-8-94', fill: '#e34' }),
-	      h( 'path', {
-	        d: 'M34,41c-6,39,29,32,33,7c39,42-69,63-33-7', fill: '#fc2', style: ("opacity: " + (data.opacity)) })
-	    )
+	    data.what
 	  )
 	); };
 
-	bind('[data-component=hello]', hello);
-	bind('[data-component=item]', item);
-	bind('[data-component=svg]', svg);
+	var svg = function (data) {
+	  var count = parseInt(data.count, 10);
+	  var step = 1 / (count || 1);
+	  var svgs = [];
+
+	  for (var i = 1; i <= count; i++) {
+	    svgs.push(
+	      h( 'svg', {
+	        className: 'dib pr3 w3', viewBox: '0 0 100 100' },
+	        h( 'ellipse', {
+	          cx: '50', cy: '80', rx: '46', ry: '19', fill: '#07c' }),
+	        h( 'path', {
+	          d: 'M43,0c-6,25,16,22,1,52c11,3,19,0,19-22c38,18,16,63-12,64c-25,2-55-39-8-94', fill: '#e34' }),
+	        h( 'path', {
+	          d: 'M34,41c-6,39,29,32,33,7c39,42-69,63-33-7', fill: '#fc2', style: ("opacity: " + (step * i)) })
+	      )
+	    );
+	  }
+
+	  return (
+	    h( 'body', null,
+	      svgs
+	    )
+	  );
+	};
+
+	bind('.hello', hello);
+	bind('.helloItem', helloItem);
+	bind('.svg', svg);
 
 	exports.h = h;
 	exports.bind = bind;
