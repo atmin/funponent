@@ -14,13 +14,14 @@
     }
   </style>
 </head>
-<body class="w-100 sans-serif lh-copy">
-  <header class="pv1 white-80 bg-dark-gray">
-    <div class="ph2 mw7 center">
-      <h1 class="f3 f1-ns">
+<body class="w-100 sans-serif">
+  <header class="pt3 pb4 white-80 bg-dark-gray">
+    <div class="cf ph2 mw7 center">
+      <h1 class="fl-l f2">
         <span class="red">f</span><span class="green">u</span><span class="blue">n</span>ponent
+        <a class="f3 fw1 white-80 tracked" style="border: 0"  href="https://github.com/atmin/funponent">(src)</a>
       </h1>
-      <h2 class="f5 fw1 tracked">
+      <h2 class="fr-l tr-l f5 fw1 tracked">
         DOM is a pure function.<br>
         State is <code>data-*</code> attributes.<br>
         If it's changed, the view will follow.
@@ -28,8 +29,8 @@
     </div>
   </header>
 
-  <main class="ph2 mw7 center dark-gray">
-    <div class="pb1 bb b--black-10">
+  <main class="ph2 mw7 center dark-gray lh-copy">
+    <div class="pb1">
       <p>
         Use DevTools to inspect following component instances,
         change <code class="nowrap">data-*</code> params
@@ -42,7 +43,7 @@
       component.
     </h2>
     <div
-      class="hello bb b--black-10"
+      class="hello ph3 ba b--dashed"
       data-count="5"
       data-name="world"></div>
 
@@ -51,16 +52,16 @@
     </h2>
     <div
       id="another-hello"
-      class="hello bb b--black-10"
+      class="hello ph3 ba b--dashed"
       data-count="10"
       data-name="you"></div>
 
     <h2>
       funponent understands
-      <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L34-L66">SVG</a>
+      <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L33-L65">SVG</a>
     </h2>
     <div
-      class="svg"
+      class="svg pa2 ba b--dashed"
       data-count="9"></div>
   </main>
 
