@@ -16,7 +16,8 @@
     "build:js": "rollup -c rollup-config.js",
     "build:html": "nunjucks src/html/**/*.html --out build",
     "test": "npm test",
-    "start": "nodemon --watch src --exec 'npm run build:js'"
+    "start": "open index.html && nodemon --watch src --exec 'npm run build:js'",
+    "publish": "git branch -D gh-pages && git checkout -b gh-pages && git push origin gh-pages"
   },
   "repository": {
     "type": "git",

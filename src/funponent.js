@@ -64,6 +64,9 @@ const h = (nodeName, attributes, ...children) => {
   return node;
 };
 
+// proxy h as React.createElement
+const React = {createElement: (...args) => h(...args)};
+
 // bind a selector to a view function
 const bind = (selector, view, options={}) => {
   const render = node => {
@@ -87,4 +90,4 @@ const bind = (selector, view, options={}) => {
   selectors[selector] = selectors[selector] || init;
 };
 
-export {h, bind};
+export {h, bind, React};

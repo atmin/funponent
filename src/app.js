@@ -12,13 +12,12 @@ const hello = data => (
           .join('\n')}
       </code>
     </pre>
-    <ul className={'list'}>
+    <ul className={'ph1 list'}>
       {Array
         .apply(null, Array(parseInt(data.count)))
         .map((el, index) => (
           <li
-            className={'pr2 dib'}
-            data-component={'item'}
+            className={'helloItem pr2 dib'}
             data-what={index} />
         ))}
     </ul>

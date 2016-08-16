@@ -648,6 +648,14 @@
 	  return node;
 	};
 
+	// proxy h as React.createElement
+	var React = {createElement: function () {
+	  var args = [], len = arguments.length;
+	  while ( len-- ) args[ len ] = arguments[ len ];
+
+	  return h.apply(void 0, args);
+	}};
+
 	// bind a selector to a view function
 	var bind = function (selector, view, options) {
 	  if ( options === void 0 ) options={};
@@ -684,12 +692,12 @@
 	          .join('\n')
 	      )
 	    ),
-	    h( 'ul', { className: 'list' },
+	    h( 'ul', { className: 'ph1 list' },
 	      Array
 	        .apply(null, Array(parseInt(data.count)))
 	        .map(function (el, index) { return (
 	          h( 'li', {
-	            className: 'pr2 dib', 'data-component': 'item', 'data-what': index })
+	            className: 'helloItem pr2 dib', 'data-what': index })
 	        ); })
 	    )
 	  )
