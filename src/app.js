@@ -5,13 +5,10 @@ const hello = data => (
     <p>
       hello, <span>{data.name}</span>
     </p>
-    <pre>
-      <code>
-        {Object.keys(data)
-          .map(key => `${key}="${data[key]}"`)
-          .join('\n')}
-      </code>
-    </pre>
+    <p>
+      A list of <code>{data.count}</code> inline elements follows.
+      Each element is a nested component.
+    </p>
     <ul className={'ph1 list'}>
       {Array
         .apply(null, Array(parseInt(data.count)))
@@ -38,7 +35,7 @@ const svg = data => {
   for (let i = 1; i <= count; i++) {
     svgs.push(
       <svg
-        className={'dib pr3 w3'}
+        className={'dib ph2 w3'}
         viewBox={'0 0 100 100'}>
         <ellipse
           cx={'50'}
@@ -59,6 +56,9 @@ const svg = data => {
 
   return (
     <body>
+      <p>
+        <code>{data.count}</code> dynamically generated SVGs
+      </p>
       {svgs}
     </body>
   );

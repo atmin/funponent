@@ -685,13 +685,7 @@
 	  h( 'body', null,
 	    h( 'p', null, "hello, ", h( 'span', null, data.name )
 	    ),
-	    h( 'pre', null,
-	      h( 'code', null,
-	        Object.keys(data)
-	          .map(function (key) { return (key + "=\"" + (data[key]) + "\""); })
-	          .join('\n')
-	      )
-	    ),
+	    h( 'p', null, "A list of ", h( 'code', null, data.count ), " inline elements follows. Each element is a nested component." ),
 	    h( 'ul', { className: 'ph1 list' },
 	      Array
 	        .apply(null, Array(parseInt(data.count)))
@@ -717,7 +711,7 @@
 	  for (var i = 1; i <= count; i++) {
 	    svgs.push(
 	      h( 'svg', {
-	        className: 'dib pr3 w3', viewBox: '0 0 100 100' },
+	        className: 'dib ph2 w3', viewBox: '0 0 100 100' },
 	        h( 'ellipse', {
 	          cx: '50', cy: '80', rx: '46', ry: '19', fill: '#07c' }),
 	        h( 'path', {
@@ -730,6 +724,8 @@
 
 	  return (
 	    h( 'body', null,
+	      h( 'p', null,
+	        h( 'code', null, data.count ), " dynamically generated SVGs" ),
 	      svgs
 	    )
 	  );
