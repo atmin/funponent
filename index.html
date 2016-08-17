@@ -37,7 +37,7 @@
 
   <main class="ph2 mw7 center dark-gray lh-copy">
     <div class="pb1">
-      <p class="i">
+      <p>
         Use JS console to select component instances
         and change their <code>dataset</code> properties.
       </p>
@@ -48,11 +48,14 @@
       component
     </h2>
     <p>
-      <code><span class="blue">› </span>document.querySelector('#hello')</code>
+      <code><span class="blue">› </span>document.querySelector('#hello').dataset</code>
+    <p>
+    </p>
+      <code><span class="blue">› </span>document.querySelector('#hello').dataset.name = 'funponent'</code>
     </p>
     <div
       id="hello"
-      class="hello ph3 mb5 ba br3 b--dashed"
+      class="hello ph3 mb5 ba br3 b--dashed bg-near-white"
       data-count="5"
       data-name="world"></div>
 
@@ -60,11 +63,14 @@
       Another instance of hello
     </h2>
     <p>
-      <code><span class="blue">› </span>document.querySelector('#another-hello')</code>
+      <code><span class="blue">› </span>document.querySelector('#another-hello').dataset</code>
+    <p>
+    </p>
+      <code><span class="blue">› </span>document.querySelector('#another-hello').dataset.count = 42</code>
     </p>
     <div
       id="another-hello"
-      class="hello ph3 mb5 ba br3 b--dashed"
+      class="hello ph3 mb5 ba br3 b--dashed bg-near-white"
       data-count="10"
       data-name="you"></div>
 
@@ -73,11 +79,14 @@
       <a href="https://github.com/atmin/funponent/blob/master/src/app.js#L30-L65">SVG</a>
     </h2>
     <p>
-      <code><span class="blue">› </span>document.querySelector('#svg')</code>
+      <code><span class="blue">› </span>document.querySelector('#svg').dataset</code>
+    <p>
+    </p>
+      <code><span class="blue">› </span>document.querySelector('#svg').dataset.count = 81</code>
     </p>
     <div
       id="svg"
-      class="svg tc pa2 mb5 ba br3 b--dashed"
+      class="svg tc pa2 mb5 ba br3 b--dashed bg-near-white"
       data-count="9"></div>
   </main>
 
