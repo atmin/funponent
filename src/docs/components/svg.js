@@ -1,33 +1,6 @@
-import {h, bind} from './funponent';
+import {h} from '../../funponent';
 
-const hello = data => (
-  <body>
-    <p>
-      hello, <span>{data.name}</span>
-    </p>
-    <p>
-      A list of <code>{data.count}</code> inline elements follows.
-      Each element is a nested component.
-    </p>
-    <ul className={'ph1 list'}>
-      {Array
-        .apply(null, Array(parseInt(data.count)))
-        .map((el, index) => (
-          <li
-            className={'helloItem pr2 dib'}
-            data-what={index} />
-        ))}
-    </ul>
-  </body>
-);
-
-const helloItem = data => (
-  <body>
-    {data.what}
-  </body>
-);
-
-const svg = data => {
+export default function(data) {
   const count = parseInt(data.count, 10);
   const step = 1 / (count || 1);
   let svgs = [];
@@ -62,11 +35,5 @@ const svg = data => {
       {svgs}
     </body>
   );
-};
+}
 
-bind('.hello', hello);
-bind('.helloItem', helloItem);
-bind('.svg', svg);
-
-// to experiment in the browser
-export {h, bind};

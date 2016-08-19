@@ -3,20 +3,28 @@
   "version": "0.0.1",
   "description": "DOM tree is a result of a pure function, receiving data-* params",
   "main": "datafun.js",
-  "dependencies": {},
+  "dependencies": {
+    "matches-selector-polyfill": "^1.0.0",
+    "morphdom": "^2.0.4"
+  },
   "devDependencies": {
-    "buble": "^0.12.5",
+    "concurrently": "^2.2.0",
     "nodemon": "^1.10.0",
     "nunjucks-cli": "^0.4.9",
-    "rollup": "^0.34.3",
+    "rollem": "^1.2.1",
+    "rollup-plugin-buble": "^0.13.0",
     "rollup-plugin-commonjs": "^3.3.1",
     "rollup-plugin-node-resolve": "^2.0.0"
   },
   "scripts": {
-    "build:js": "rollup -c rollup-config.js",
-    "build:html": "nunjucks src/html/**/*.html --out build",
+    "build:js": "rollem",
+    "build:docs": "nunjucks *.tpl --path src/docs --out docs",
+    "build": "npm run build:js && npm run build:docs",
+    "watch:js": "nodemon --watch src/docs/components --exec 'npm run build:js'",
+    "watch:docs": "nodemon --watch src/docs --ext tpl --exec 'npm run build:docs'",
+    "watch": "concurrently --kill-others 'npm run watch:js' 'npm run watch:docs'",
     "test": "npm test",
-    "start": "open index.html && nodemon --watch src --exec 'npm run build:js'",
+    "start": "open docs/index.html && npm run watch",
     "publish": "git branch -D gh-pages && git checkout -b gh-pages && git push origin gh-pages"
   },
   "repository": {
@@ -34,5 +42,5 @@
   "bugs": {
     "url": "https://github.com/atmin/funponent/issues"
   },
-  "homepage": "https://github.com/atmin/funponent#readme"
+  "homepage": "https://atmin.github.io/funponent"
 }

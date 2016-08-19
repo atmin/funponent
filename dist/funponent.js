@@ -254,18 +254,34 @@
 
 	    // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
 	    var fromNodesLookup = {};
+	    var keyedRemovalList;
 
-	    function walkDiscardedChildNodes(node) {
+	    function addKeyedRemoval(key) {
+	        if (keyedRemovalList) {
+	            keyedRemovalList.push(key);
+	        } else {
+	            keyedRemovalList = [key];
+	        }
+	    }
+
+	    function walkDiscardedChildNodes(node, skipKeyedNodes) {
 	        if (node.nodeType === ELEMENT_NODE) {
 	            var curChild = node.firstChild;
 	            while (curChild) {
-	                if (!getNodeKey(curChild)) {
+
+	                var key = undefined;
+
+	                if (skipKeyedNodes && (key = getNodeKey(curChild))) {
+	                    // If we are skipping keyed nodes then we add the key
+	                    // to a list so that it can be handled at the very end.
+	                    addKeyedRemoval(key);
+	                } else {
 	                    // Only report the node as discarded if it is not keyed. We do this because
 	                    // at the end we loop through all keyed elements that were unmatched
 	                    // and then discard them in one final pass.
 	                    onNodeDiscarded(curChild);
 	                    if (curChild.firstChild) {
-	                        walkDiscardedChildNodes(curChild);
+	                        walkDiscardedChildNodes(curChild, skipKeyedNodes);
 	                    }
 	                }
 
@@ -274,7 +290,15 @@
 	        }
 	    }
 
-	    function removeNode(node, parentNode) {
+	    /**
+	     * Removes a DOM node out of the original DOM
+	     *
+	     * @param  {Node} node The node to remove
+	     * @param  {Node} parentNode The nodes parent
+	     * @param  {Boolean} skipKeyedNodes If true then elements with keys will be skipped and not discarded.
+	     * @return {undefined}
+	     */
+	    function removeNode(node, parentNode, skipKeyedNodes) {
 	        if (onBeforeNodeDiscarded(node) === false) {
 	            return;
 	        }
@@ -284,7 +308,7 @@
 	        }
 
 	        onNodeDiscarded(node);
-	        walkDiscardedChildNodes(node);
+	        walkDiscardedChildNodes(node, skipKeyedNodes);
 	    }
 
 	    // // TreeWalker implementation is no faster, but keeping this around in case this changes in the future
@@ -357,6 +381,8 @@
 
 	    function morphEl(fromEl, toEl, childrenOnly) {
 	        var toElKey = getNodeKey(toEl);
+	        var curFromNodeKey;
+
 	        if (toElKey) {
 	            // If an element with an ID is being morphed then it is will be in the final
 	            // DOM so clear it out of the saved elements collection
@@ -390,7 +416,7 @@
 	                curToNodeKey = getNodeKey(curToNodeChild);
 
 	                while (curFromNodeChild) {
-	                    var curFromNodeKey = getNodeKey(curFromNodeChild);
+	                    curFromNodeKey = getNodeKey(curFromNodeChild);
 	                    fromNextSibling = curFromNodeChild.nextSibling;
 
 	                    var curFromNodeType = curFromNodeChild.nodeType;
@@ -426,8 +452,15 @@
 	                                            // all lifecycle hooks are correctly invoked
 	                                            fromEl.insertBefore(matchingFromEl, curFromNodeChild);
 
-	                                            if (!curFromNodeKey) {
-	                                                removeNode(curFromNodeChild, fromEl);
+	                                            if (curFromNodeKey) {
+	                                                // Since the node is keyed it might be matched up later so we defer
+	                                                // the actual removal to later
+	                                                addKeyedRemoval(curFromNodeKey);
+	                                            } else {
+	                                                // NOTE: we skip nested keyed nodes from being removed since there is
+	                                                //       still a chance they will be matched up later
+	                                                removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
+
 	                                            }
 	                                            fromNextSibling = curFromNodeChild.nextSibling;
 	                                            curFromNodeChild = matchingFromEl;
@@ -473,8 +506,14 @@
 	                    // target tree and we don't want to discard it just yet since it still might find a
 	                    // home in the final DOM tree. After everything is done we will remove any keyed nodes
 	                    // that didn't find a home
-	                    if (!curFromNodeKey) {
-	                        removeNode(curFromNodeChild, fromEl);
+	                    if (curFromNodeKey) {
+	                        // Since the node is keyed it might be matched up later so we defer
+	                        // the actual removal to later
+	                        addKeyedRemoval(curFromNodeKey);
+	                    } else {
+	                        // NOTE: we skip nested keyed nodes from being removed since there is
+	                        //       still a chance they will be matched up later
+	                        removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
 	                    }
 
 	                    curFromNodeChild = fromNextSibling;
@@ -503,8 +542,14 @@
 	            // to be removed
 	            while (curFromNodeChild) {
 	                fromNextSibling = curFromNodeChild.nextSibling;
-	                if (!getNodeKey(curFromNodeChild)) {
-	                    removeNode(curFromNodeChild, fromEl);
+	                if ((curFromNodeKey = getNodeKey(curFromNodeChild))) {
+	                    // Since the node is keyed it might be matched up later so we defer
+	                    // the actual removal to later
+	                    addKeyedRemoval(curFromNodeKey);
+	                } else {
+	                    // NOTE: we skip nested keyed nodes from being removed since there is
+	                    //       still a chance they will be matched up later
+	                    removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
 	                }
 	                curFromNodeChild = fromNextSibling;
 	            }
@@ -551,10 +596,17 @@
 	    } else {
 	        morphEl(morphedNode, toNode, childrenOnly);
 
-	        for (var k in fromNodesLookup) {
-	            var elToRemove = fromNodesLookup[k];
-	            if (elToRemove) {
-	                removeNode(elToRemove, elToRemove.parentNode);
+	        // We now need to loop over any keyed nodes that might need to be
+	        // removed. We only do the removal if we know that the keyed node
+	        // never found a match. When a keyed node is matched up we remove
+	        // it out of fromNodesLookup and we use fromNodesLookup to determine
+	        // if a keyed node has been matched up or not
+	        if (keyedRemovalList) {
+	            for (var i=0, len=keyedRemovalList.length; i<len; i++) {
+	                var elToRemove = fromNodesLookup[keyedRemovalList[i]];
+	                if (elToRemove) {
+	                    removeNode(elToRemove, elToRemove.parentNode, false);
+	                }
 	            }
 	        }
 	    }
@@ -681,62 +733,9 @@
 	  selectors[selector] = selectors[selector] || init;
 	};
 
-	var hello = function (data) { return (
-	  h( 'body', null,
-	    h( 'p', null, "hello, ", h( 'span', null, data.name )
-	    ),
-	    h( 'p', null, "A list of ", h( 'code', null, data.count ), " inline elements follows. Each element is a nested component." ),
-	    h( 'ul', { className: 'ph1 list' },
-	      Array
-	        .apply(null, Array(parseInt(data.count)))
-	        .map(function (el, index) { return (
-	          h( 'li', {
-	            className: 'helloItem pr2 dib', 'data-what': index })
-	        ); })
-	    )
-	  )
-	); };
-
-	var helloItem = function (data) { return (
-	  h( 'body', null,
-	    data.what
-	  )
-	); };
-
-	var svg = function (data) {
-	  var count = parseInt(data.count, 10);
-	  var step = 1 / (count || 1);
-	  var svgs = [];
-
-	  for (var i = 1; i <= count; i++) {
-	    svgs.push(
-	      h( 'svg', {
-	        className: 'dib ph2 w3', viewBox: '0 0 100 100' },
-	        h( 'ellipse', {
-	          cx: '50', cy: '80', rx: '46', ry: '19', fill: '#07c' }),
-	        h( 'path', {
-	          d: 'M43,0c-6,25,16,22,1,52c11,3,19,0,19-22c38,18,16,63-12,64c-25,2-55-39-8-94', fill: '#e34' }),
-	        h( 'path', {
-	          d: 'M34,41c-6,39,29,32,33,7c39,42-69,63-33-7', fill: '#fc2', style: ("opacity: " + (step * i)) })
-	      )
-	    );
-	  }
-
-	  return (
-	    h( 'body', null,
-	      h( 'p', null,
-	        h( 'code', null, data.count ), " dynamically generated SVGs" ),
-	      svgs
-	    )
-	  );
-	};
-
-	bind('.hello', hello);
-	bind('.helloItem', helloItem);
-	bind('.svg', svg);
-
 	exports.h = h;
 	exports.bind = bind;
+	exports.React = React;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

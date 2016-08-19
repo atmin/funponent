@@ -1,0 +1,19 @@
+{% set tachyons_blue = '#357edd' %}
+
+a {
+  text-decoration: none;
+  color: {{ tachyons_blue }};
+}
+
+a:hover {
+  border-bottom: 1px dotted #999;
+}
+
+a:before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  background-image: url({% include '_github-icon-dataurl.tpl' %});
+}
