@@ -1,6 +1,6 @@
 {
   "name": "funponent",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "DOM tree is a result of a pure function, receiving data-* params",
   "main": "dist/funponent.js",
   "dependencies": {
