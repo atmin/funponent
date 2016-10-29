@@ -42,14 +42,16 @@ const svgTags = [
   'set', 'stop', 'switch', 'symbol', 'text', 'textPath', 'title', 'tref',
   'tspan', 'use', 'view', 'vkern',
 ];
+const kebabCase = str => str.replace(/[A-Z]/g, (letter, pos) => '-' + letter.toLowerCase());
 const h = (nodeName, attributes, ...children) => {
   const node = (svgTags.indexOf(nodeName) > -1) ?
     document.createElementNS(svgns, nodeName) :
     document.createElement(nodeName);
   const setAttribute = attr => {
     const value = typeof attributes[attr] === 'object' ?
-      Object.keys(attributes[attr]).map(key => `${key}:${attributes[attr][key]}`).join(';') :
-      attributes[attr];
+      Object.keys(attributes[attr])
+        .map(key => `${kebabCase(key)}:${attributes[attr][key]}`)
+        .join(';') : attributes[attr];
     node.setAttribute(specialAttrs[attr] || attr, value);
   };
   Object.keys(attributes || {}).forEach(setAttribute);

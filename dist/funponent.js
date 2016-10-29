@@ -675,6 +675,7 @@
 	  'set', 'stop', 'switch', 'symbol', 'text', 'textPath', 'title', 'tref',
 	  'tspan', 'use', 'view', 'vkern',
 	];
+	var kebabCase = function (str) { return str.replace(/[A-Z]/g, function (letter, pos) { return '-' + letter.toLowerCase(); }); };
 	var h = function (nodeName, attributes) {
 	  var children = [], len = arguments.length - 2;
 	  while ( len-- > 0 ) children[ len ] = arguments[ len + 2 ];
@@ -684,8 +685,9 @@
 	    document.createElement(nodeName);
 	  var setAttribute = function (attr) {
 	    var value = typeof attributes[attr] === 'object' ?
-	      Object.keys(attributes[attr]).map(function (key) { return (key + ":" + (attributes[attr][key])); }).join(';') :
-	      attributes[attr];
+	      Object.keys(attributes[attr])
+	        .map(function (key) { return ((kebabCase(key)) + ":" + (attributes[attr][key])); })
+	        .join(';') : attributes[attr];
 	    node.setAttribute(specialAttrs[attr] || attr, value);
 	  };
 	  Object.keys(attributes || {}).forEach(setAttribute);
