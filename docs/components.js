@@ -677,7 +677,10 @@ var h = function (nodeName, attributes) {
     document.createElementNS(svgns, nodeName) :
     document.createElement(nodeName);
   var setAttribute = function (attr) {
-    node.setAttribute(specialAttrs[attr] || attr, attributes[attr]);
+    var value = typeof attributes[attr] === 'object' ?
+      Object.keys(attributes[attr]).map(function (key) { return (key + ":" + (attributes[attr][key])); }).join(';') :
+      attributes[attr];
+    node.setAttribute(specialAttrs[attr] || attr, value);
   };
   Object.keys(attributes || {}).forEach(setAttribute);
   children.forEach(function (child) {
@@ -733,7 +736,7 @@ var bind = function (selector, view, options) {
 function hello(data) {
   return (
     h( 'body', null,
-      h( 'p', null, "hello, ", h( 'span', null, data.name )
+      h( 'p', { style: {'font-size': '120%'} }, "hello, ", h( 'span', null, data.name )
       ),
       h( 'p', null, "A list of ", h( 'code', null, data.count ), " inline elements follows. Each element is a nested component." ),
       h( 'ul', { className: 'ph1 list' },

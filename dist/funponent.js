@@ -683,7 +683,10 @@
 	    document.createElementNS(svgns, nodeName) :
 	    document.createElement(nodeName);
 	  var setAttribute = function (attr) {
-	    node.setAttribute(specialAttrs[attr] || attr, attributes[attr]);
+	    var value = typeof attributes[attr] === 'object' ?
+	      Object.keys(attributes[attr]).map(function (key) { return (key + ":" + (attributes[attr][key])); }).join(';') :
+	      attributes[attr];
+	    node.setAttribute(specialAttrs[attr] || attr, value);
 	  };
 	  Object.keys(attributes || {}).forEach(setAttribute);
 	  children.forEach(function (child) {

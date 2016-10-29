@@ -3,7 +3,7 @@ import {h} from '../../funponent';
 export default function(data) {
   return (
     <body>
-      <p>
+      <p style={{'font-size': '120%'}}>
         hello, <span>{data.name}</span>
       </p>
       <p>

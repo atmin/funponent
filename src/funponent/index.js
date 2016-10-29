@@ -47,7 +47,10 @@ const h = (nodeName, attributes, ...children) => {
     document.createElementNS(svgns, nodeName) :
     document.createElement(nodeName);
   const setAttribute = attr => {
-    node.setAttribute(specialAttrs[attr] || attr, attributes[attr]);
+    const value = typeof attributes[attr] === 'object' ?
+      Object.keys(attributes[attr]).map(key => `${key}:${attributes[attr][key]}`).join(';') :
+      attributes[attr];
+    node.setAttribute(specialAttrs[attr] || attr, value);
   };
   Object.keys(attributes || {}).forEach(setAttribute);
   children.forEach(child => {
