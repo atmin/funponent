@@ -2,7 +2,7 @@
   "name": "funponent",
   "version": "0.0.1",
   "description": "DOM tree is a result of a pure function, receiving data-* params",
-  "main": "datafun.js",
+  "main": "dist/funponent.js",
   "dependencies": {
     "matches-selector-polyfill": "^1.0.0",
     "morphdom": "^2.0.4"

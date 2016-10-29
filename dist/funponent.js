@@ -727,6 +727,9 @@
 	      attributes: true,
 	      childList: true,
 	    });
+	    if (typeof view.init === 'function') {
+	      view.init(node);
+	    }
 	    render(node);
 	  };
 	  [].slice.call(document.querySelectorAll(selector)).forEach(init);

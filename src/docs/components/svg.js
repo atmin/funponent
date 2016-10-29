@@ -1,6 +1,6 @@
 import {h} from '../../funponent';
 
-export default function(data) {
+function svg(data) {
   const count = parseInt(data.count, 10);
   const step = 1 / (count || 1);
   let svgs = [];
@@ -37,3 +37,6 @@ export default function(data) {
   );
 }
 
+svg.init = node => console.log('svg component initialized on node', node);
+
+export default svg;

@@ -721,6 +721,9 @@ var bind = function (selector, view, options) {
       attributes: true,
       childList: true,
     });
+    if (typeof view.init === 'function') {
+      view.init(node);
+    }
     render(node);
   };
   [].slice.call(document.querySelectorAll(selector)).forEach(init);
@@ -780,6 +783,8 @@ function svg(data) {
     )
   );
 }
+
+svg.init = function (node) { return console.log('svg component initialized on node', node); };
 
 bind('.hello', hello);
 bind('.helloItem', helloItem);
