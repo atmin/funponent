@@ -678,11 +678,16 @@ var h = function (nodeName, attributes) {
     document.createElementNS(svgns, nodeName) :
     document.createElement(nodeName);
   var setAttribute = function (attr) {
-    var value = typeof attributes[attr] === 'object' ?
+    var val = attributes[attr];
+    var value = val && typeof val === 'object' ?
       Object.keys(attributes[attr])
         .map(function (key) { return ((kebabCase(key)) + ":" + (attributes[attr][key])); })
-        .join(';') : attributes[attr];
-    node.setAttribute(specialAttrs[attr] || attr, value);
+        .join(';') : val;
+    if (value === null) {
+      node.removeAttribute(specialAttrs[attr] || attr);
+    } else {
+      node.setAttribute(specialAttrs[attr] || attr, value);
+    }
   };
   Object.keys(attributes || {}).forEach(setAttribute);
   children.forEach(function (child) {
@@ -740,7 +745,7 @@ function hello(data) {
     h( 'body', null,
       h( 'p', { style: {fontSize: '120%'} }, "hello, ", h( 'span', null, data.name )
       ),
-      h( 'p', null, "A list of ", h( 'code', null, data.count ), " inline elements follows. Each element is a nested component." ),
+      h( 'p', { 'non-existant-attr': null }, "A list of ", h( 'code', null, data.count ), " inline elements follows. Each element is a nested component."),
       h( 'ul', { className: 'ph1 list' },
         Array
           .apply(null, Array(parseInt(data.count)))

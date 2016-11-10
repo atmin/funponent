@@ -48,11 +48,16 @@ const h = (nodeName, attributes, ...children) => {
     document.createElementNS(svgns, nodeName) :
     document.createElement(nodeName);
   const setAttribute = attr => {
-    const value = typeof attributes[attr] === 'object' ?
+    const val = attributes[attr];
+    const value = val && typeof val === 'object' ?
       Object.keys(attributes[attr])
         .map(key => `${kebabCase(key)}:${attributes[attr][key]}`)
-        .join(';') : attributes[attr];
-    node.setAttribute(specialAttrs[attr] || attr, value);
+        .join(';') : val;
+    if (value === null) {
+      node.removeAttribute(specialAttrs[attr] || attr);
+    } else {
+      node.setAttribute(specialAttrs[attr] || attr, value);
+    }
   };
   Object.keys(attributes || {}).forEach(setAttribute);
   children.forEach(child => {

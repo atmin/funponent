@@ -684,11 +684,16 @@
 	    document.createElementNS(svgns, nodeName) :
 	    document.createElement(nodeName);
 	  var setAttribute = function (attr) {
-	    var value = typeof attributes[attr] === 'object' ?
+	    var val = attributes[attr];
+	    var value = val && typeof val === 'object' ?
 	      Object.keys(attributes[attr])
 	        .map(function (key) { return ((kebabCase(key)) + ":" + (attributes[attr][key])); })
-	        .join(';') : attributes[attr];
-	    node.setAttribute(specialAttrs[attr] || attr, value);
+	        .join(';') : val;
+	    if (value === null) {
+	      node.removeAttribute(specialAttrs[attr] || attr);
+	    } else {
+	      node.setAttribute(specialAttrs[attr] || attr, value);
+	    }
 	  };
 	  Object.keys(attributes || {}).forEach(setAttribute);
 	  children.forEach(function (child) {

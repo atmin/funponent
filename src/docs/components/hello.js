@@ -6,7 +6,7 @@ export default function(data) {
       <p style={{fontSize: '120%'}}>
         hello, <span>{data.name}</span>
       </p>
-      <p>
+      <p non-existant-attr={null}>
         A list of <code>{data.count}</code> inline elements follows.
         Each element is a nested component.
       </p>
